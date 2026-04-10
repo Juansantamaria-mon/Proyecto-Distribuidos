@@ -174,7 +174,7 @@ class MonitorPC3:
         with self._lock:
             self._ultimo_heartbeat = time.time()
             if not self._pc3_activo:
-                logger.info("✅ PC3 recuperado — reanudando envío a BD principal")
+                logger.info("PC3 recuperado — reanudando envío a BD principal")
             self._pc3_activo = True
 
     def verificar(self) -> bool:
@@ -182,7 +182,7 @@ class MonitorPC3:
             elapsed = time.time() - self._ultimo_heartbeat
             if elapsed > self._timeout and self._pc3_activo:
                 logger.warning(
-                    f"⚠️  PC3 no responde desde hace {elapsed:.1f}s "
+                    f" PC3 no responde desde hace {elapsed:.1f}s "
                     f"(timeout={self._timeout}s) — usando réplica en PC2"
                 )
                 self._pc3_activo = False
@@ -291,7 +291,7 @@ def iniciar_servicio(config: dict) -> None:
                 return {"ok": False, "error": "Se requiere lista de 'vias'"}
             cmd = {"accion": "PRIORIDAD", "vias": vias}
             push_semaforos.send(json.dumps(cmd).encode())
-            logger.info(f"🚨 AMBULANCIA: prioridad activada en {vias}")
+            logger.info(f" AMBULANCIA: prioridad activada en {vias}")
             _push_a_bds({
                 "tipo": "prioridad",
                 "vias": vias,
