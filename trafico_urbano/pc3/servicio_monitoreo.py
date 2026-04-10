@@ -155,7 +155,7 @@ MENU = """
 ║  3. Historial de tráfico por intersección y período           ║
 ║  4. Historial de congestiones                                 ║
 ║  5. Estadísticas generales de la BD                           ║
-║  6. 🚨  Activar paso de ambulancia (ola verde)               ║
+║  6. Activar paso de ambulancia (ola verde)                    ║
 ║  7. Forzar cambio de semáforo en intersección                 ║
 ║  8. Verificar estado del sistema (ping a analítica)           ║
 ║  0. Salir                                                     ║
@@ -196,7 +196,7 @@ def formatear_estado_trafico(estado: str) -> str:
 
 def mostrar_estado_interseccion(resp: dict):
     if not resp or not resp.get("ok"):
-        print(f"  ⚠  Error: {resp.get('error', 'Sin respuesta') if resp else 'Sin respuesta'}")
+        print(f"  Error: {resp.get('error', 'Sin respuesta') if resp else 'Sin respuesta'}")
         return
     d = resp.get("data", {})
     print(f"""
@@ -233,7 +233,7 @@ def ejecutar_cli(analitica: ClienteAnalitica, bd: ClienteBD, config: dict):
             resp = analitica.enviar({"tipo": "ESTADO_SISTEMA"})
             if resp and resp.get("ok"):
                 data = resp.get("data", {})
-                print(f"\n  PC3 activo: {'✅' if resp.get('pc3_activo') else '❌'}")
+                print(f"\n  PC3 activo: {'' if resp.get('pc3_activo') else '❌'}")
                 print(f"\n  {'Intersección':<14} {'Estado':<12} "
                       f"{'Q':>5} {'Vp':>7} {'Cv':>5}")
                 print("  " + "─" * 50)
@@ -245,7 +245,7 @@ def ejecutar_cli(analitica: ClienteAnalitica, bd: ClienteBD, config: dict):
                         f"{d.get('Cv', 0):>5.1f}"
                     )
             else:
-                print(f"  ⚠  Sin respuesta de la analítica")
+                print(f" Sin respuesta de la analítica")
 
         # ── Opción 3: historial por intersección ─────────────────
         elif opcion == "3":
@@ -271,7 +271,7 @@ def ejecutar_cli(analitica: ClienteAnalitica, bd: ClienteBD, config: dict):
                 if len(rows) > 20:
                     print(f"  ... (mostrando primeros 20 de {len(rows)})")
             else:
-                print(f"  ⚠  Error en consulta: {resp}")
+                print(f" Error en consulta: {resp}")
 
         # ── Opción 4: historial de congestiones ──────────────────
         elif opcion == "4":
@@ -293,7 +293,7 @@ def ejecutar_cli(analitica: ClienteAnalitica, bd: ClienteBD, config: dict):
                         f"Cv={r.get('Cv',0):.0f}"
                     )
             else:
-                print(f"  ⚠  Error: {resp}")
+                print(f"  Error: {resp}")
 
         # ── Opción 5: estadísticas generales ─────────────────────
         elif opcion == "5":
@@ -306,7 +306,7 @@ def ejecutar_cli(analitica: ClienteAnalitica, bd: ClienteBD, config: dict):
   Total prioridades: {d.get('total_prioridades', 0)}
 """)
             else:
-                print(f"  ⚠  Error: {resp}")
+                print(f"   Error: {resp}")
 
         # ── Opción 6: ambulancia ──────────────────────────────────
         elif opcion == "6":
@@ -315,20 +315,20 @@ def ejecutar_cli(analitica: ClienteAnalitica, bd: ClienteBD, config: dict):
             entrada = input("  Intersecciones (separadas por coma): ").strip()
             vias    = [v.strip().upper() for v in entrada.split(",") if v.strip()]
             if not vias:
-                print("  ⚠  No ingresó intersecciones.")
+                print("   No ingresó intersecciones.")
                 continue
             resp = analitica.enviar({"tipo": "AMBULANCIA", "vias": vias})
             if resp and resp.get("ok"):
-                print(f"  🚨 ¡Prioridad activada! Ola verde en: {vias}")
+                print(f"  ¡Prioridad activada! Ola verde en: {vias}")
             else:
-                print(f"  ⚠  Error: {resp}")
+                print(f"   Error: {resp}")
 
         # ── Opción 7: forzar cambio de semáforo ──────────────────
         elif opcion == "7":
             inter  = pedir_interseccion(config)
             estado = input("  Nuevo estado (VERDE/ROJO): ").strip().upper()
             if estado not in ("VERDE", "ROJO"):
-                print("  ⚠  Estado inválido.")
+                print("   Estado inválido.")
                 continue
             resp = analitica.enviar({
                 "tipo": "CAMBIAR_SEMAFORO",
@@ -336,9 +336,9 @@ def ejecutar_cli(analitica: ClienteAnalitica, bd: ClienteBD, config: dict):
                 "nuevo_estado": estado
             })
             if resp and resp.get("ok"):
-                print(f"  ✅ Semáforo {inter} cambiado a {estado}")
+                print(f"  Semáforo {inter} cambiado a {estado}")
             else:
-                print(f"  ⚠  Error: {resp}")
+                print(f"   Error: {resp}")
 
         # ── Opción 8: ping ────────────────────────────────────────
         elif opcion == "8":
@@ -346,11 +346,11 @@ def ejecutar_cli(analitica: ClienteAnalitica, bd: ClienteBD, config: dict):
             resp = analitica.enviar({"tipo": "ESTADO_SISTEMA"})
             dt   = (time.time() - t0) * 1000
             if resp:
-                estado_pc3 = "✅ ACTIVO" if resp.get("pc3_activo") else "❌ CAÍDO"
-                print(f"  Analítica PC2: ✅ responde ({dt:.1f} ms)")
+                estado_pc3 = " ACTIVO" if resp.get("pc3_activo") else "❌ CAÍDO"
+                print(f"  Analítica PC2:  responde ({dt:.1f} ms)")
                 print(f"  PC3:           {estado_pc3}")
             else:
-                print(f"  Analítica PC2: ❌ no responde")
+                print(f"  Analítica PC2:  no responde")
 
         elif opcion == "0":
             print("  Hasta luego.")
