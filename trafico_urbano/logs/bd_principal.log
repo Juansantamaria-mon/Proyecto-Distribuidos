@@ -1,0 +1,8 @@
+2026-04-06T12:21:56 | INFO     | BD-Replica           | BD inicializada en: /home/estudiante/trafico_urbano/pc3/trafico_principal.db
+2026-04-06T12:21:56 | INFO     | BD-Principal         | BD Principal PULL en *:5559
+2026-04-06T12:21:56 | INFO     | BD-Principal         | BD Principal REP  en *:5570
+2026-04-06T12:21:56 | INFO     | BD-Principal         | Heartbeat PUB en *:5561 (cada 3s)
+2026-04-06T12:21:56 | INFO     | BD-Principal         | ══════════════════════════════════════════════════
+2026-04-06T12:21:56 | INFO     | BD-Principal         |   BD Principal iniciada
+2026-04-06T12:21:56 | INFO     | BD-Principal         | ══════════════════════════════════════════════════
+2026-04-06T12:22:01 | INFO     | BD-Principal         | Cerrando BD principal (total: 0 registros)
